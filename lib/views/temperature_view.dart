@@ -6,11 +6,11 @@ class TemperatureConverterView extends StatefulWidget {
 
   @override
   // ignore: library_private_types_in_public_api
-  __TemperatureConverterViewState createState() => 
+  _TemperatureConverterViewState createState() => 
       _TemperatureConverterViewState();
 }
 
-class __TemperatureConverterViewState
+class _TemperatureConverterViewState
     extends State<TemperatureConverterView> {
   final TextEditingController _controller = TextEditingController();
   String _result = '';
