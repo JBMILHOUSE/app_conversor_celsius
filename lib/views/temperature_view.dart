@@ -6,15 +6,15 @@ class TemperatureConverterView extends StatefulWidget {
 
   @override
   // ignore: library_private_types_in_public_api
-  _TemperatureConverterScreenState createState() =>
-      _TemperatureConverterScreenState();
+  __TemperatureConverterViewState createState() => 
+      _TemperatureConverterViewState();
 }
 
-class _TemperatureConverterScreenState
+class __TemperatureConverterViewState
     extends State<TemperatureConverterView> {
   final TextEditingController _controller = TextEditingController();
   String _result = '';
-  bool _isCelsiusToFahrenheit = true;
+  String _conversionType = 'Celsius para Fahrenheit'; // Valor inicial válido
 
   // Realiza a conversão com base na seleção do usuário
   void _convertTemperature() {
@@ -27,16 +27,53 @@ class _TemperatureConverterScreenState
     }
 
     double convertedValue;
-    if (_isCelsiusToFahrenheit) {
-      convertedValue = TemperatureService.celsiusToFahrenheit(input);
-      setState(() {
-        _result = '${input.toStringAsFixed(1)}°C é igual a ${convertedValue.toStringAsFixed(1)}°F';
-      });
-    } else {
-      convertedValue = TemperatureService.fahrenheitToCelsius(input);
-      setState(() {
-        _result = '${input.toStringAsFixed(1)}°F é igual a ${convertedValue.toStringAsFixed(1)}°C';
-      });
+    switch (_conversionType) {
+      case 'Celsius para Fahrenheit':
+        convertedValue = TemperatureService.celsiusToFahrenheit(input);
+        setState(() {
+          _result =
+              '${input.toStringAsFixed(1)}°C é igual a ${convertedValue.toStringAsFixed(1)}°F';
+        });
+        break;
+      case 'Fahrenheit para Celsius':
+        convertedValue = TemperatureService.fahrenheitToCelsius(input);
+        setState(() {
+          _result =
+              '${input.toStringAsFixed(1)}°F é igual a ${convertedValue.toStringAsFixed(1)}°C';
+        });
+        break;
+      case 'Celsius para Kelvin':
+        convertedValue = TemperatureService.celsiusToKelvin(input);
+        setState(() {
+          _result =
+              '${input.toStringAsFixed(1)}°C é igual a ${convertedValue.toStringAsFixed(1)}K';
+        });
+        break;
+      case 'Kelvin para Celsius':
+        convertedValue = TemperatureService.kelvinToCelsius(input);
+        setState(() {
+          _result =
+              '${input.toStringAsFixed(1)}K é igual a ${convertedValue.toStringAsFixed(1)}°C';
+        });
+        break;
+      case 'Fahrenheit para Kelvin':
+        convertedValue = TemperatureService.fahrenheitToKelvin(input);
+        setState(() {
+          _result =
+              '${input.toStringAsFixed(1)}°F é igual a ${convertedValue.toStringAsFixed(1)}K';
+        });
+        break;
+      case 'Kelvin para Fahrenheit':
+        convertedValue = TemperatureService.kelvinToFahrenheit(input);
+        setState(() {
+          _result =
+              '${input.toStringAsFixed(1)}K é igual a ${convertedValue.toStringAsFixed(1)}°F';
+        });
+        break;
+      default:
+        setState(() {
+          _result = 'Selecione um tipo de conversão.';
+        });
     }
   }
 
@@ -65,36 +102,31 @@ class _TemperatureConverterScreenState
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _isCelsiusToFahrenheit = true;
-                    });
-                    _convertTemperature();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        _isCelsiusToFahrenheit ? Colors.blue : Colors.grey,
-                  ),
-                  child: const Text('Celsius para Fahrenheit'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _isCelsiusToFahrenheit = false;
-                    });
-                    _convertTemperature();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        !_isCelsiusToFahrenheit ? Colors.blue : Colors.grey,
-                  ),
-                  child: const Text('Fahrenheit para Celsius'),
-                ),
-              ],
+            DropdownButton<String>(
+              value: _conversionType,
+              onChanged: (newValue) {
+                setState(() {
+                  _conversionType = newValue!;
+                });
+              },
+              items: [
+                'Celsius para Fahrenheit',
+                'Fahrenheit para Celsius',
+                'Celsius para Kelvin',
+                'Kelvin para Celsius',
+                'Fahrenheit para Kelvin',
+                'Kelvin para Fahrenheit',
+              ].map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _convertTemperature,
+              child: const Text('Converter'),
             ),
             const SizedBox(height: 24),
             Text(
